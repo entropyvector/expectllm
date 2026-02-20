@@ -10,7 +10,7 @@
 **The insight:** Agents are just expect scripts. Send a message, expect a pattern, branch on the match. That's it.
 
 <p align="center">
-  <img src="demo/demo.gif" alt="expectllm demo" width="600">
+  <img src="assets/demo.gif" alt="expectllm demo" width="600">
 </p>
 
 ## Table of Contents
@@ -75,7 +75,7 @@ That's it. Send a message, expect a pattern, branch on the result.
 ## Before/After
 
 <p align="center">
-  <img src="demo/before_after.png" alt="Before/After comparison" width="700">
+  <img src="assets/before_after.png" alt="Before/After comparison" width="700">
 </p>
 
 **Traditional approach (20+ lines):**
@@ -188,7 +188,7 @@ c = Conversation(
 ### Extract Structured Data
 
 <p align="center">
-  <img src="demo/json_extract.gif" alt="JSON extraction demo" width="600">
+  <img src="assets/json_extract.gif" alt="JSON extraction demo" width="600">
 </p>
 
 ```python
@@ -246,7 +246,7 @@ print(f"Phone: {c.match.group(3)}")
 ### Retry Pattern
 
 <p align="center">
-  <img src="demo/retry.gif" alt="Retry pattern demo" width="600">
+  <img src="assets/retry.gif" alt="Retry pattern demo" width="600">
 </p>
 
 ```python

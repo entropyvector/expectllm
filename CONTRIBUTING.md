@@ -2,7 +2,15 @@
 
 Thank you for your interest in contributing!
 
-## Development Setup
+## For Users: Getting Updates
+
+```bash
+pip install --upgrade expectllm
+```
+
+## For Contributors
+
+### Development Setup
 
 1. Clone the repository
 2. Create a virtual environment: `python -m venv venv`
@@ -51,3 +59,13 @@ Remember our core constraints:
 - Total code must be < 600 lines (excluding tests)
 - No dependencies beyond `anthropic` and `openai`
 - Must work with Python 3.9+
+
+## Versioning
+
+We use [Semantic Versioning](https://semver.org/):
+
+| Change type | Version bump | Example |
+|-------------|--------------|---------|
+| Bug fixes | Patch | `0.1.0` → `0.1.1` |
+| New features (backwards compatible) | Minor | `0.1.0` → `0.2.0` |
+| Breaking changes | Major | `0.1.0` → `1.0.0` |
