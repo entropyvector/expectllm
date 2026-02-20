@@ -1,21 +1,21 @@
-# llm-expect
+# expectllm
 
-[![PyPI version](https://badge.fury.io/py/llm-expect.svg)](https://badge.fury.io/py/llm-expect)
+[![PyPI version](https://badge.fury.io/py/expectllm.svg)](https://badge.fury.io/py/expectllm)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://github.com/entropyvector/llm-expect/actions/workflows/ci.yml/badge.svg)](https://github.com/entropyvector/llm-expect/actions/workflows/ci.yml)
+[![Tests](https://github.com/entropyvector/expectllm/actions/workflows/ci.yml/badge.svg)](https://github.com/entropyvector/expectllm/actions/workflows/ci.yml)
 
 > Expect scripts for LLM conversations.
 
 **The insight:** Agents are just expect scripts. Send a message, expect a pattern, branch on the match. That's it.
 
 <p align="center">
-  <img src="assets/demo.gif" alt="llm-expect demo" width="600">
+  <img src="demo/demo.gif" alt="expectllm demo" width="600">
 </p>
 
 ## Table of Contents
 
-- [Why llm-expect?](#why-llm-expect)
+- [Why expectllm?](#why-expectllm)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -29,7 +29,7 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-## Why llm-expect?
+## Why expectllm?
 
 1. **Zero boilerplate** — No chains, no schemas, no output parsers. Just send and expect.
 2. **Pattern-first design** — Use regex patterns you already know. The LLM adapts to your format, not the other way around.
@@ -48,20 +48,20 @@
 
 ```bash
 # Core only (no providers)
-pip install llm-expect
+pip install expectllm
 
 # With specific provider
-pip install llm-expect[openai]
-pip install llm-expect[anthropic]
+pip install expectllm[openai]
+pip install expectllm[anthropic]
 
 # All providers
-pip install llm-expect[all]
+pip install expectllm[all]
 ```
 
 ## Quick Start
 
 ```python
-from llmexpect import Conversation
+from expectllm import Conversation
 
 c = Conversation()
 c.send("Is Python dynamically typed? Reply YES or NO")
@@ -75,7 +75,7 @@ That's it. Send a message, expect a pattern, branch on the result.
 ## Before/After
 
 <p align="center">
-  <img src="assets/before_after.png" alt="Before/After comparison" width="700">
+  <img src="demo/before_after.png" alt="Before/After comparison" width="700">
 </p>
 
 **Traditional approach (20+ lines):**
@@ -86,9 +86,9 @@ from pydantic import BaseModel, Field
 # ... setup, chains, error handling ...
 ```
 
-**llm-expect (4 lines):**
+**expectllm (4 lines):**
 ```python
-from llmexpect import Conversation
+from expectllm import Conversation
 
 c = Conversation()
 c.send("Review this code. Reply with SEVERITY: low/medium/high",
@@ -100,13 +100,13 @@ severity = c.match.group(1)
 
 ### Pattern-to-Prompt
 
-When you pass an `expect` pattern to `send()`, llm-expect automatically appends format instructions:
+When you pass an `expect` pattern to `send()`, expectllm automatically appends format instructions:
 
 ```python
 # You write:
 c.send("Is this secure?", expect=r"^(YES|NO)$")
 
-# llm-expect sends:
+# expectllm sends:
 # "Is this secure?
 #
 #  Reply with exactly 'YES' or 'NO'."
@@ -188,11 +188,11 @@ c = Conversation(
 ### Extract Structured Data
 
 <p align="center">
-  <img src="assets/json_extract.gif" alt="JSON extraction demo" width="600">
+  <img src="demo/json_extract.gif" alt="JSON extraction demo" width="600">
 </p>
 
 ```python
-from llmexpect import Conversation
+from expectllm import Conversation
 
 c = Conversation()
 c.send("Parse this: 'Meeting with John at 3pm tomorrow'")
@@ -202,7 +202,7 @@ event = c.expect_json()  # {"person": "John", "time": "3pm", "date": "tomorrow"}
 ### Multi-Turn Code Review
 
 ```python
-from llmexpect import Conversation, ExpectError
+from expectllm import Conversation, ExpectError
 import re
 
 code = '''
@@ -224,7 +224,7 @@ if c.match.group(2) and int(c.match.group(2)) > 0:
 ### Data Extraction
 
 ```python
-from llmexpect import Conversation
+from expectllm import Conversation
 
 text = "Contact John Smith at john@example.com or 555-1234"
 
@@ -246,11 +246,11 @@ print(f"Phone: {c.match.group(3)}")
 ### Retry Pattern
 
 <p align="center">
-  <img src="assets/retry.gif" alt="Retry pattern demo" width="600">
+  <img src="demo/retry.gif" alt="Retry pattern demo" width="600">
 </p>
 
 ```python
-from llmexpect import Conversation, ExpectError
+from expectllm import Conversation, ExpectError
 
 def analyze_document(text: str, max_retries: int = 3) -> dict:
     c = Conversation(system_prompt="You are a document analyzer.")
@@ -278,7 +278,7 @@ export ANTHROPIC_API_KEY="your-key"
 export OPENAI_API_KEY="your-key"
 ```
 
-llm-expect auto-detects the provider from the environment. Anthropic is preferred if both are set.
+expectllm auto-detects the provider from the environment. Anthropic is preferred if both are set.
 
 ## Prompting Tips
 
@@ -293,12 +293,12 @@ For reliable pattern matching:
 
 **LLM Non-Determinism**: LLM outputs are inherently non-deterministic. The same prompt may produce different responses across calls. For production use:
 
-- Use explicit format instructions (llm-expect does this automatically with `expect=`)
+- Use explicit format instructions (expectllm does this automatically with `expect=`)
 - Implement retry logic for critical extractions
 - Consider temperature=0 for more consistent outputs
 - Test patterns against varied response formats
 
-**Not a Testing Framework**: llm-expect is for *scripting conversations*, not for unit testing LLM outputs. For assertions about LLM behavior, combine with your existing test framework.
+**Not a Testing Framework**: expectllm is for *scripting conversations*, not for unit testing LLM outputs. For assertions about LLM behavior, combine with your existing test framework.
 
 ## Contributing
 

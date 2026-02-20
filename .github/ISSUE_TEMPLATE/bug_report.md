@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug in llm-expect
+about: Report a bug in expectllm
 title: ''
 labels: bug
 assignees: ''
@@ -12,7 +12,7 @@ A clear description of what the bug is.
 **To Reproduce**
 ```python
 # Minimal code to reproduce
-from llmexpect import Conversation
+from expectllm import Conversation
 c = Conversation()
 # ...
 ```
@@ -21,6 +21,6 @@ c = Conversation()
 What you expected to happen.
 
 **Environment**
-- llm-expect version:
+- expectllm version:
 - Python version:
 - OS:

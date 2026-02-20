@@ -1,4 +1,4 @@
-"""Core Conversation class for llm-expect."""
+"""Core Conversation class for expectllm."""
 from __future__ import annotations
 
 import json

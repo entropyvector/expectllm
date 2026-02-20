@@ -1,4 +1,4 @@
-"""Pytest fixtures and mocks for llm-expect tests."""
+"""Pytest fixtures and mocks for expectllm tests."""
 import pytest
 from unittest.mock import MagicMock, patch
 from typing import Dict, List, Optional
@@ -56,10 +56,10 @@ def no_api_keys(monkeypatch):
 @pytest.fixture
 def conversation_with_mock(mock_anthropic_env):
     """Create a Conversation with mocked provider."""
-    from llmexpect import Conversation
+    from expectllm import Conversation
 
     mock = MockProvider()
-    with patch("llmexpect.conversation.get_provider", return_value=mock):
+    with patch("expectllm.conversation.get_provider", return_value=mock):
         conv = Conversation()
         conv._mock = mock  # Expose mock for test assertions
         yield conv

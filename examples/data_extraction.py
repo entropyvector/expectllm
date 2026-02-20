@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Extract structured data using regex patterns."""
 
-from llmexpect import Conversation
+from expectllm import Conversation
 
 text = "Contact John Smith at john@example.com or call 555-1234"
 

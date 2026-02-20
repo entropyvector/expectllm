@@ -34,7 +34,7 @@ jobs:
       - name: Type check with mypy
         run: mypy src/
       - name: Run tests
-        run: pytest tests/ --ignore=tests/test_integration.py --ignore=tests/test_extreme_stress.py --cov=llmexpect --cov-report=xml
+        run: pytest tests/ --ignore=tests/test_integration.py --ignore=tests/test_extreme_stress.py --cov=expectllm --cov-report=xml
       - name: Check line count
         run: |
           lines=$(find src -name "*.py" | xargs wc -l | tail -1 | awk '{print $1}')

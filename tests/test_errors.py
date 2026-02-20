@@ -1,6 +1,6 @@
-"""Tests for llm-expect error classes."""
+"""Tests for expectllm error classes."""
 import pytest
-from llmexpect import ExpectError, ProviderError, ConfigError, LLMExpectError
+from expectllm import ExpectError, ProviderError, ConfigError, ExpectLLMError
 
 
 class TestExpectError:
@@ -34,9 +34,9 @@ class TestExpectError:
         assert "retry" in str(err).lower()
 
     def test_expect_error_inherits_from_base(self):
-        """ExpectError inherits from LLMExpectError."""
+        """ExpectError inherits from ExpectLLMError."""
         err = ExpectError("pattern", "response")
-        assert isinstance(err, LLMExpectError)
+        assert isinstance(err, ExpectLLMError)
         assert isinstance(err, Exception)
 
 
@@ -49,9 +49,9 @@ class TestProviderError:
         assert "API rate limit exceeded" in str(err)
 
     def test_provider_error_inherits_from_base(self):
-        """ProviderError inherits from LLMExpectError."""
+        """ProviderError inherits from ExpectLLMError."""
         err = ProviderError("error")
-        assert isinstance(err, LLMExpectError)
+        assert isinstance(err, ExpectLLMError)
 
 
 class TestConfigError:
@@ -63,16 +63,16 @@ class TestConfigError:
         assert "Missing API key" in str(err)
 
     def test_config_error_inherits_from_base(self):
-        """ConfigError inherits from LLMExpectError."""
+        """ConfigError inherits from ExpectLLMError."""
         err = ConfigError("error")
-        assert isinstance(err, LLMExpectError)
+        assert isinstance(err, ExpectLLMError)
 
 
 class TestErrorHierarchy:
     """Tests for error hierarchy."""
 
     def test_all_errors_catchable_by_base(self):
-        """All errors can be caught by LLMExpectError."""
+        """All errors can be caught by ExpectLLMError."""
         errors = [
             ExpectError("p", "r"),
             ProviderError("error"),
@@ -81,10 +81,10 @@ class TestErrorHierarchy:
         for err in errors:
             try:
                 raise err
-            except LLMExpectError:
+            except ExpectLLMError:
                 pass  # Expected
             except Exception:
-                pytest.fail(f"{type(err).__name__} not caught by LLMExpectError")
+                pytest.fail(f"{type(err).__name__} not caught by ExpectLLMError")
 
 
 class TestExpectErrorAdvanced:
@@ -247,14 +247,14 @@ class TestExpectErrorFromRegex:
     def test_expect_error_preserves_regex_cause(self):
         """When ExpectError wraps regex error, cause is preserved."""
         import re
-        from llmexpect import Conversation
+        from expectllm import Conversation
         from unittest.mock import patch, MagicMock
 
         # Create a mock provider
         mock_provider = MagicMock()
         mock_provider.complete.return_value = "test response"
 
-        with patch("llmexpect.conversation.get_provider", return_value=mock_provider):
+        with patch("expectllm.conversation.get_provider", return_value=mock_provider):
             with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test"}):
                 c = Conversation()
                 c.send("Hello")
@@ -285,11 +285,11 @@ class TestErrorInheritance:
         err = ConfigError("error")
         assert isinstance(err, Exception)
 
-    def test_llmexpect_error_is_base_for_all(self):
-        """All custom errors inherit from LLMExpectError."""
-        assert issubclass(ExpectError, LLMExpectError)
-        assert issubclass(ProviderError, LLMExpectError)
-        assert issubclass(ConfigError, LLMExpectError)
+    def test_expectllm_error_is_base_for_all(self):
+        """All custom errors inherit from ExpectLLMError."""
+        assert issubclass(ExpectError, ExpectLLMError)
+        assert issubclass(ProviderError, ExpectLLMError)
+        assert issubclass(ConfigError, ExpectLLMError)
 
 
 class TestErrorRepr:

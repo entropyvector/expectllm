@@ -1,1 +1,1 @@
-"""Tests for llm-expect."""
+"""Tests for expectllm."""

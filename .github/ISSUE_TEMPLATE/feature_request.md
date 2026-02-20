@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for llm-expect
+about: Suggest an idea for expectllm
 title: ''
 labels: enhancement
 assignees: ''

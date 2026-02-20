@@ -1,11 +1,11 @@
-"""Custom exceptions for llm-expect."""
+"""Custom exceptions for expectllm."""
 
 
-class LLMExpectError(Exception):
-    """Base exception for llm-expect."""
+class ExpectLLMError(Exception):
+    """Base exception for expectllm."""
 
 
-class ExpectError(LLMExpectError):
+class ExpectError(ExpectLLMError):
     """Pattern not found in response."""
 
     def __init__(self, pattern: str, response: str, suggestion: str = "") -> None:
@@ -21,9 +21,9 @@ class ExpectError(LLMExpectError):
         super().__init__(message)
 
 
-class ProviderError(LLMExpectError):
+class ProviderError(ExpectLLMError):
     """Provider/API related error."""
 
 
-class ConfigError(LLMExpectError):
+class ConfigError(ExpectLLMError):
     """Configuration/setup error."""

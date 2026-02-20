@@ -1,4 +1,4 @@
-"""Stress tests for llm-expect library."""
+"""Stress tests for expectllm library."""
 import re
 import gc
 import sys
@@ -8,7 +8,7 @@ import threading
 import time
 import pytest
 from unittest.mock import patch, MagicMock
-from llmexpect import Conversation, ExpectError, ProviderError, ConfigError
+from expectllm import Conversation, ExpectError, ProviderError, ConfigError
 
 
 class MockProvider:
@@ -32,7 +32,7 @@ class TestLoadTesting:
 
     def test_sequential_throughput(self, mock_anthropic_env):
         """LOAD-001: 50 sequential send() calls."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["response"] * 100)
             mock_get.return_value = mock
             c = Conversation()
@@ -54,7 +54,7 @@ class TestLoadTesting:
 
         def run_conversation(thread_id):
             try:
-                with patch("llmexpect.conversation.get_provider") as mock_get:
+                with patch("expectllm.conversation.get_provider") as mock_get:
                     mock = MockProvider([f"Response {thread_id}"] * 10)
                     mock_get.return_value = mock
                     c = Conversation()
@@ -81,7 +81,7 @@ class TestLoadTesting:
 
     def test_long_conversation(self, mock_anthropic_env):
         """LOAD-003: 200 turns in one conversation."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Response"] * 300)
             mock_get.return_value = mock
             c = Conversation()
@@ -95,7 +95,7 @@ class TestLoadTesting:
     def test_large_response_handling(self, mock_anthropic_env):
         """LOAD-004: Response > 100KB."""
         large_response = "x" * 150000  # 150KB
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([large_response])
             mock_get.return_value = mock
             c = Conversation()
@@ -110,7 +110,7 @@ class TestLoadTesting:
         large_pattern = "(" + "|".join([f"longerword{i:04d}" for i in range(1000)]) + ")"
         assert len(large_pattern) > 10000
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["The result is longerword0500 here"])
             mock_get.return_value = mock
             c = Conversation()
@@ -125,7 +125,7 @@ class TestLoadTesting:
         """LOAD-006: Memory stability with many conversations."""
         initial_objects = len(gc.get_objects())
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Response"])
             mock_get.return_value = mock
 
@@ -148,7 +148,7 @@ class TestLoadTesting:
         pattern = r"(\w+\s+){10,20}end"
         response = " ".join(["word"] * 15) + " end"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -172,7 +172,7 @@ class TestAdversarialInputs:
         pattern = r"(a+)+b"
         response = "aaab"  # Simple match, no backtracking
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -189,7 +189,7 @@ class TestAdversarialInputs:
         """ADV-002: Response contains null bytes."""
         response_with_nulls = "Hello\x00World\x00Test"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response_with_nulls])
             mock_get.return_value = mock
             c = Conversation()
@@ -204,7 +204,7 @@ class TestAdversarialInputs:
         """ADV-003: Response contains ANSI control characters."""
         response_with_ansi = "Normal \x1b[31mRed\x1b[0m text"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response_with_ansi])
             mock_get.return_value = mock
             c = Conversation()
@@ -218,7 +218,7 @@ class TestAdversarialInputs:
         """ADV-004: 1MB prompt handling."""
         long_prompt = "x" * 1_000_000  # 1MB
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["OK"])
             mock_get.return_value = mock
             c = Conversation()
@@ -233,7 +233,7 @@ class TestAdversarialInputs:
         # Using an invalid pattern instead
         invalid_pattern = r"(?P<name>(?P<name>test))"  # Duplicate group name
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["test"])
             mock_get.return_value = mock
             c = Conversation()
@@ -247,7 +247,7 @@ class TestAdversarialInputs:
         """ADV-006: SQL injection in prompt is safe."""
         injection = "'; DROP TABLE users; --"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Normal response"])
             mock_get.return_value = mock
             c = Conversation()
@@ -261,7 +261,7 @@ class TestAdversarialInputs:
         """ADV-007: Path traversal in prompt is safe."""
         traversal = "../../../etc/passwd"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Safe response"])
             mock_get.return_value = mock
             c = Conversation()
@@ -276,7 +276,7 @@ class TestEdgeCases:
 
     def test_conversation_reuse(self, mock_anthropic_env):
         """EDGE-001: Same conversation many send() calls."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Response"] * 100)
             mock_get.return_value = mock
             c = Conversation()
@@ -290,7 +290,7 @@ class TestEdgeCases:
 
     def test_parallel_expect_calls(self, mock_anthropic_env):
         """EDGE-002: Multiple expect() on same response."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["The answer is 42 and status is OK"])
             mock_get.return_value = mock
             c = Conversation()
@@ -305,7 +305,7 @@ class TestEdgeCases:
 
     def test_rapid_fire_sends(self, mock_anthropic_env):
         """EDGE-003: Rapid send() calls."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["OK"] * 100)
             mock_get.return_value = mock
             c = Conversation()
@@ -320,7 +320,7 @@ class TestEdgeCases:
 
     def test_conversation_after_clear(self, mock_anthropic_env):
         """EDGE-004: Conversation works after clear_history."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["First", "Second"])
             mock_get.return_value = mock
             c = Conversation()
@@ -339,7 +339,7 @@ class TestEdgeCases:
 
     def test_pickle_serialization(self, mock_anthropic_env):
         """EDGE-005: Conversation state survives pickle."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Response with 42"])
             mock_get.return_value = mock
             c = Conversation()
@@ -360,7 +360,7 @@ class TestEdgeCases:
 
     def test_deepcopy_conversation(self, mock_anthropic_env):
         """EDGE-006: Deepcopy creates independent copy."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Response"])
             mock_get.return_value = mock
             c = Conversation()
@@ -399,7 +399,7 @@ class TestSecurityTests:
     def test_no_eval_exec_in_codebase(self):
         """SEC-004: No eval/exec in source code (re.compile is allowed)."""
         import os
-        src_dir = os.path.join(os.path.dirname(__file__), "..", "src", "llmexpect")
+        src_dir = os.path.join(os.path.dirname(__file__), "..", "src", "expectllm")
 
         # Only check for dangerous eval/exec - re.compile is safe
         dangerous_patterns = ["eval(", "exec("]
@@ -415,7 +415,7 @@ class TestSecurityTests:
     def test_no_subprocess_in_codebase(self):
         """SEC-005: No shell commands in source code."""
         import os
-        src_dir = os.path.join(os.path.dirname(__file__), "..", "src", "llmexpect")
+        src_dir = os.path.join(os.path.dirname(__file__), "..", "src", "expectllm")
 
         dangerous_imports = ["import subprocess", "from subprocess", "import os\nos.system", "os.popen"]
 
@@ -448,7 +448,7 @@ class TestTimeoutTests:
 
     def test_timeout_triggers_with_slow_provider(self, mock_anthropic_env):
         """TIME-005: Timeout actually triggers on slow response."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             # Create a mock that sleeps longer than timeout
             slow_mock = MockProvider(["Response"], delay=0.5)
             mock_get.return_value = slow_mock
@@ -469,7 +469,7 @@ class TestNetworkErrors:
 
     def test_connection_error_wrapped(self, mock_anthropic_env):
         """NET-002: Connection errors wrapped in ProviderError."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider()
             mock.complete = MagicMock(side_effect=ConnectionError("Connection refused"))
             mock_get.return_value = mock
@@ -481,7 +481,7 @@ class TestNetworkErrors:
 
     def test_timeout_error_handling(self, mock_anthropic_env):
         """NET-004: Timeout error handling."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider()
             mock.complete = MagicMock(side_effect=TimeoutError("Request timeout"))
             mock_get.return_value = mock
@@ -500,7 +500,7 @@ class TestBossTests:
         # Emoji + RTL + ZWJ sequences
         unicode_response = "Hello 👨‍👩‍👧‍👦 مرحبا 🏳️‍🌈 Test"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([unicode_response])
             mock_get.return_value = mock
             c = Conversation()
@@ -512,7 +512,7 @@ class TestBossTests:
 
     def test_consecutive_turn_marathon(self, mock_anthropic_env):
         """BOSS-007: 200 consecutive turns."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([f"Response {i}" for i in range(250)])
             mock_get.return_value = mock
             c = Conversation()
@@ -527,7 +527,7 @@ class TestBossTests:
         """BOSS-008: Response with control characters."""
         response = "Line1\x00\x1b\r\nLine2\tTab\x08Backspace"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -539,7 +539,7 @@ class TestBossTests:
 
     def test_zero_latency_flood(self, mock_anthropic_env):
         """BOSS-011: 1000 requests as fast as possible."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["OK"] * 1100)
             mock_get.return_value = mock
             c = Conversation(max_history=100)  # Limit history to prevent memory issues
@@ -562,7 +562,7 @@ class TestBossTests:
         '; DROP TABLE users; --
         """
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([dangerous_response])
             mock_get.return_value = mock
             c = Conversation()
@@ -579,7 +579,7 @@ class TestPatternEdgeCases:
 
     def test_empty_pattern(self, mock_anthropic_env):
         """Empty pattern matches everything."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Any response"])
             mock_get.return_value = mock
             c = Conversation()
@@ -592,7 +592,7 @@ class TestPatternEdgeCases:
         """Multiline pattern with ^ and $."""
         response = "Line 1\nLine 2\nLine 3"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -606,7 +606,7 @@ class TestPatternEdgeCases:
         """Lookahead pattern."""
         response = "foo123bar"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -620,7 +620,7 @@ class TestPatternEdgeCases:
         """Lookbehind pattern."""
         response = "foo123bar"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -635,7 +635,7 @@ class TestPatternEdgeCases:
         """Non-capturing groups."""
         response = "color: red"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -648,7 +648,7 @@ class TestPatternEdgeCases:
         """Word boundary matching."""
         response = "the cat in the hat"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -666,7 +666,7 @@ class TestExpectTemplateStress:
         """Deeply nested JSON in code block (nested JSON requires code block extraction)."""
         deep_json = '{"a": {"b": {"c": {"d": {"e": "value"}}}}}'
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             # Use code block format for deeply nested JSON
             mock = MockProvider([f"```json\n{deep_json}\n```"])
             mock_get.return_value = mock
@@ -680,7 +680,7 @@ class TestExpectTemplateStress:
         """JSON with arrays."""
         json_with_arrays = '{"items": [1, 2, 3], "names": ["a", "b", "c"]}'
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([f"Result: {json_with_arrays}"])
             mock_get.return_value = mock
             c = Conversation()
@@ -692,7 +692,7 @@ class TestExpectTemplateStress:
 
     def test_expect_number_large(self, mock_anthropic_env):
         """Very large number."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["The count is 999,999,999"])
             mock_get.return_value = mock
             c = Conversation()
@@ -706,7 +706,7 @@ class TestExpectTemplateStress:
         # Use distinct names to avoid substring collisions (opt_50 vs opt_5)
         choices = [f"opt_{i:03d}" for i in range(100)]
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["I choose opt_050"])
             mock_get.return_value = mock
             c = Conversation()
@@ -728,7 +728,7 @@ And JavaScript:
 console.log("second")
 ```
 """
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider([response])
             mock_get.return_value = mock
             c = Conversation()
@@ -753,7 +753,7 @@ class TestMaxHistoryEdgeCases:
 
     def test_max_history_two_is_minimum(self, mock_anthropic_env):
         """max_history=2 is the minimum valid value (keeps last exchange)."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["r1", "r2", "r3"])
             mock_get.return_value = mock
             c = Conversation(max_history=2)
@@ -771,7 +771,7 @@ class TestMaxHistoryEdgeCases:
 
     def test_max_history_none_unlimited(self, mock_anthropic_env):
         """max_history=None means unlimited history."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["response"] * 100)
             mock_get.return_value = mock
             c = Conversation(max_history=None)
@@ -788,7 +788,7 @@ class TestConversationStateConsistency:
 
     def test_last_response_matches_history(self, mock_anthropic_env):
         """last_response always matches last assistant message in history."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["response1", "response2", "response3"])
             mock_get.return_value = mock
             c = Conversation()
@@ -801,7 +801,7 @@ class TestConversationStateConsistency:
 
     def test_match_cleared_after_clear_history(self, mock_anthropic_env):
         """match is cleared after clear_history()."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["42"])
             mock_get.return_value = mock
             c = Conversation()
@@ -815,7 +815,7 @@ class TestConversationStateConsistency:
 
     def test_last_response_cleared_after_clear_history(self, mock_anthropic_env):
         """last_response is empty after clear_history()."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Some response"])
             mock_get.return_value = mock
             c = Conversation()
@@ -832,7 +832,7 @@ class TestExpectJsonArrayHandling:
 
     def test_expect_json_rejects_bare_array(self, mock_anthropic_env):
         """expect_json() with bare JSON array should fail."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(['[1, 2, 3]'])
             mock_get.return_value = mock
             c = Conversation()
@@ -844,7 +844,7 @@ class TestExpectJsonArrayHandling:
 
     def test_expect_json_object_with_array_values(self, mock_anthropic_env):
         """expect_json() with object containing arrays works."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(['{"data": [1, 2, 3], "nested": {"arr": ["a", "b"]}}'])
             mock_get.return_value = mock
             c = Conversation()
@@ -867,7 +867,7 @@ class TestProviderInteraction:
                 received_messages.append(list(messages))
                 return f"r{len(received_messages)}"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock_get.return_value = MessageTrackingProvider()
             c = Conversation()
 
@@ -892,7 +892,7 @@ class TestProviderInteraction:
                 received_system_prompts.append(system_prompt)
                 return "response"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock_get.return_value = SystemPromptTrackingProvider()
             c = Conversation(system_prompt="Be helpful")
 
@@ -909,7 +909,7 @@ class TestProviderInteraction:
                 call_timeouts.append(timeout)
                 return "response"
 
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock_get.return_value = TimeoutTrackingProvider()
             c = Conversation(timeout=120)
 
@@ -923,7 +923,7 @@ class TestComplexPatternMatching:
 
     def test_pattern_with_unicode_classes(self, mock_anthropic_env):
         """Pattern with Unicode character classes."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["日本語テスト"])
             mock_get.return_value = mock
             c = Conversation()
@@ -935,7 +935,7 @@ class TestComplexPatternMatching:
 
     def test_pattern_with_backreferences(self, mock_anthropic_env):
         """Pattern with backreferences."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["The word 'hello' is repeated: hello"])
             mock_get.return_value = mock
             c = Conversation()
@@ -947,7 +947,7 @@ class TestComplexPatternMatching:
 
     def test_pattern_with_conditional(self, mock_anthropic_env):
         """Pattern with conditional construct."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock = MockProvider(["Value: 123"])
             mock_get.return_value = mock
             c = Conversation()
@@ -965,7 +965,7 @@ class TestConcurrencySafety:
 
     def test_multiple_conversations_independent(self, mock_anthropic_env):
         """Multiple conversations don't interfere."""
-        with patch("llmexpect.conversation.get_provider") as mock_get:
+        with patch("expectllm.conversation.get_provider") as mock_get:
             mock1 = MockProvider(["response1"])
             mock2 = MockProvider(["response2"])
 

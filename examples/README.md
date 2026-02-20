@@ -1,11 +1,11 @@
 # Examples
 
-Standalone examples demonstrating llm-expect usage patterns.
+Standalone examples demonstrating expectllm usage patterns.
 
 ## Setup
 
 ```bash
-pip install llm-expect[all]
+pip install expectllm[all]
 export ANTHROPIC_API_KEY="your-key"  # or OPENAI_API_KEY
 ```
 

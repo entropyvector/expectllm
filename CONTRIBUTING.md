@@ -1,4 +1,4 @@
-# Contributing to llm-expect
+# Contributing to expectllm
 
 Thank you for your interest in contributing!
 
@@ -16,7 +16,7 @@ Thank you for your interest in contributing!
 pytest tests/ --ignore=tests/test_integration.py
 
 # With coverage
-pytest tests/ --cov=llmexpect --cov-report=term-missing
+pytest tests/ --cov=expectllm --cov-report=term-missing
 
 # Integration tests (requires ANTHROPIC_API_KEY or OPENAI_API_KEY)
 pytest tests/test_integration.py

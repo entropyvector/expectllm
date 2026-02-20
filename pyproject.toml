@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "llmexpect"
+name = "expectllm"
 version = "0.1.0"
 description = "Expect scripts for LLM conversations"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
 authors = [
-    {name = "Zaur Jafarov", email = "llmexpect@gmail.com"}
+    {name = "Zaur Jafarov", email = "expectllm@gmail.com"}
 ]
 keywords = ["llm", "ai", "expect", "automation", "conversation", "openai", "anthropic", "agent"]
 classifiers = [
@@ -52,17 +52,17 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/entropyvector/llmexpect"
-Documentation = "https://github.com/entropyvector/llmexpect#readme"
-Repository = "https://github.com/entropyvector/llmexpect.git"
-Issues = "https://github.com/entropyvector/llmexpect/issues"
-Changelog = "https://github.com/entropyvector/llmexpect/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/entropyvector/expectllm"
+Documentation = "https://github.com/entropyvector/expectllm#readme"
+Repository = "https://github.com/entropyvector/expectllm.git"
+Issues = "https://github.com/entropyvector/expectllm/issues"
+Changelog = "https://github.com/entropyvector/expectllm/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.sdist]
 include = ["/src"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/llmexpect"]
+packages = ["src/expectllm"]
 
 [tool.ruff]
 target-version = "py39"
@@ -85,7 +85,7 @@ warn_return_any = true
 warn_unused_ignores = true
 
 [tool.coverage.run]
-source = ["src/llmexpect"]
+source = ["src/expectllm"]
 branch = true
 
 [tool.coverage.report]

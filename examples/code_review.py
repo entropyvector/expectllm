@@ -3,7 +3,7 @@
 
 import re
 
-from llmexpect import Conversation
+from expectllm import Conversation
 
 code = '''
 def process_user(data):

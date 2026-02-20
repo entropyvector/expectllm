@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Extract structured JSON from text."""
 
-from llmexpect import Conversation
+from expectllm import Conversation
 
 text = "Meeting with John at 3pm tomorrow in the conference room"
 

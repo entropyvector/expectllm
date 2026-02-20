@@ -1,10 +1,10 @@
-"""Integration tests for llm-expect (require API keys)."""
+"""Integration tests for expectllm (require API keys)."""
 import gc
 import os
 import threading
 import time
 import pytest
-from llmexpect import Conversation, ExpectError, ConfigError
+from expectllm import Conversation, ExpectError, ConfigError
 
 
 # Skip all tests if no API key is available
@@ -667,7 +667,7 @@ import random
 import re
 import string
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from llmexpect import ProviderError
+from expectllm import ProviderError
 
 
 class TestExtremeConcurrency:

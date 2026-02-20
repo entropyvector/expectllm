@@ -1,9 +1,9 @@
-"""Tests for llm-expect providers."""
+"""Tests for expectllm providers."""
 import pytest
 import sys
 from unittest.mock import patch, MagicMock
-from llmexpect import ConfigError, ProviderError
-from llmexpect.providers import (
+from expectllm import ConfigError, ProviderError
+from expectllm.providers import (
     get_provider,
     AnthropicProvider,
     OpenAIProvider,
@@ -343,14 +343,14 @@ class TestBaseProviderAbstract:
 
     def test_base_provider_is_abstract(self):
         """BaseProvider cannot be instantiated directly."""
-        from llmexpect.providers import BaseProvider
+        from expectllm.providers import BaseProvider
         with pytest.raises(TypeError) as exc_info:
             BaseProvider()
         assert "abstract" in str(exc_info.value).lower() or "instantiate" in str(exc_info.value).lower()
 
     def test_base_provider_requires_complete_method(self):
         """BaseProvider requires complete() to be implemented."""
-        from llmexpect.providers import BaseProvider
+        from expectllm.providers import BaseProvider
 
         class IncompleteProvider(BaseProvider):
             pass

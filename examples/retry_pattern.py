@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Retry pattern for robust extraction."""
 
-from llmexpect import Conversation, ExpectError
+from expectllm import Conversation, ExpectError
 
 
 def extract_with_retry(prompt: str, max_retries: int = 3) -> dict:

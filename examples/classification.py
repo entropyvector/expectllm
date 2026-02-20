@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Classification with expect_choice."""
 
-from llmexpect import Conversation
+from expectllm import Conversation
 
 messages = [
     "The login button doesn't work on mobile",
