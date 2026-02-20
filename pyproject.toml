@@ -1,0 +1,95 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llmexpect"
+version = "0.1.0"
+description = "Expect scripts for LLM conversations"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Zaur Jafarov", email = "llmexpect@gmail.com"}
+]
+keywords = ["llm", "ai", "expect", "automation", "conversation", "openai", "anthropic", "agent"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.optional-dependencies]
+openai = ["openai>=1.0.0"]
+anthropic = ["anthropic>=0.18.0"]
+all = [
+    "openai>=1.0.0",
+    "anthropic>=0.18.0",
+]
+dev = [
+    "openai>=1.0.0",
+    "anthropic>=0.18.0",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+    "build>=1.0",
+    "twine>=4.0",
+    "tox>=4.0",
+    "pre-commit>=3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/entropyvector/llmexpect"
+Documentation = "https://github.com/entropyvector/llmexpect#readme"
+Repository = "https://github.com/entropyvector/llmexpect.git"
+Issues = "https://github.com/entropyvector/llmexpect/issues"
+Changelog = "https://github.com/entropyvector/llmexpect/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.sdist]
+include = ["/src"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llmexpect"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not integration'"
+markers = [
+    "integration: marks tests as integration tests (require API keys, run with: pytest -m integration)",
+]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.coverage.run]
+source = ["src/llmexpect"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
